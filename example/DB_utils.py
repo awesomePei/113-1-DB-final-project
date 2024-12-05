@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import sys
-import psycopg2
-from tabulate import tabulate
+import psycopg2 # type: ignore
+from tabulate import tabulate # type: ignore
 from threading import Lock
 
-DB_NAME = "I'M_IN"
-DB_USER = "dbta"
+DB_NAME = "final_example"
+DB_USER = "postgres"
 DB_HOST = "127.0.0.1"
 DB_PORT = 5432
 
@@ -16,7 +18,7 @@ def db_connect():
     exit_code = 0
     try:
         global db
-        db = psycopg2.connect(database=DB_NAME, user=DB_USER, password='1234', 
+        db = psycopg2.connect(database=DB_NAME, user=DB_USER, password='0000', 
                               host=DB_HOST, port=DB_PORT)
         print("Successfully connect to DBMS.")
         global cur
@@ -154,8 +156,8 @@ def create_study_group(content, user_max, course_id, user_id,
     print("Is Available!!!")
 
     query = "select Create_Study_Group(%s, %s, %s, %s, %s, %s, %s, %s);"
-    # print(cur.mogrify(query, [content, user_max, course_id, user_id, 
-    #                    event_date, event_period_start, event_duration, classroom_id]))
+    print(cur.mogrify(query, [content, user_max, course_id, user_id, 
+                       event_date, event_period_start, event_duration, classroom_id]))
     cur.execute(query, [content, user_max, course_id, user_id, 
                        event_date, event_period_start, event_duration, classroom_id])
 
