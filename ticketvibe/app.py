@@ -4,7 +4,7 @@ from db import execute_query
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Change this to a secure key
 
-# Home page
+# 主頁
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -120,7 +120,7 @@ def add_concert():
         # Admin submits the form to add a new concert
         concert_name = request.form['concert_name']
         concert_time = request.form['concert_time']
-        PR_capacity = request.form['pr_capacity']
+        PR_capacity = request.form['PR_capacity']
         presale_capacity = request.form['presale_capacity']
         public_capacity = request.form['public_capacity']
         venue_address = request.form['venue_address']
@@ -129,7 +129,7 @@ def add_concert():
         public_sale_time = request.form['public_sale_time']
 
         query = """
-            INSERT INTO public."CONCERT" (name, time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
+            INSERT INTO public."CONCERT" (name, time, "PR_capacity", presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         execute_query(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
