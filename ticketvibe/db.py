@@ -3,9 +3,9 @@ from psycopg2.extras import RealDictCursor
 
 def get_connection():
     return psycopg2.connect(
-        dbname="ticketvibe",
+        dbname="DB Final",
         user="postgres",
-        password="",
+        password="0000",
         host="localhost",
         port="5432"
     )

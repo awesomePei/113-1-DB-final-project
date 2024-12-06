@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Concerts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+        h1 {
+            color: #52b6dd;
+            margin-top: 20px;
+        }
+        table {
+            margin: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #52b6dd;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        a {
+            text-decoration: none;
+            color: #52b6dd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Concerts !!</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Host</th>
+                <th>Presale Time</th>
+                <th>Public Sale Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for concert in concerts %}
+            <tr>
+                <td>{{ concert.name }}</td>
+                <td>{{ concert.time }}</td>
+                <td>{{ concert.venue_address }}</td>
+                <td>{{ concert.host_phone }}</td>
+                <td>{{ concert.presale_time }}</td>
+                <td>{{ concert.public_sale_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/">Back to Home</a>
+</body>
+</html>

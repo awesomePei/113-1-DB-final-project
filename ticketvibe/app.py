@@ -190,6 +190,13 @@ def add_venue():
 
     return render_template('add_venue.html')
 
+# 查詢演唱會
+@app.route('/search_concert')
+def search_concert():
+    query = """SELECT * FROM public."CONCERT";"""
+    concerts = execute_query(query, fetch_all=True)
+    return render_template('search_concert.html', concerts=concerts)
+
 
 # 登出頁面
 @app.route('/logout')
