@@ -138,6 +138,58 @@ def add_concert():
 
     return render_template('add_concert.html')  # This will render the form for adding a new concert
 
+# admin 新增 host
+@app.route('/add_host', methods=['GET', 'POST'])
+def add_host():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        name = request.form['name']
+        phone = request.form['phone']
+        email = request.form['email']
+        person_in_charge = request.form['person_in_charge']
+
+        query = """
+            INSERT INTO public."HOST" (name, phone, email, person_in_charge)
+            VALUES (%s, %s, %s, %s);
+        """
+        try:
+            execute_query(query, (name, phone, email, person_in_charge))
+            flash("Host added successfully!", "success")
+            return redirect(url_for('admin_dashboard'))
+        except:
+            flash("Error adding host. Please try again.", "danger")
+
+    return render_template('add_host.html')
+
+# admin 新增 venue
+@app.route('/add_venue', methods=['GET', 'POST'])
+def add_venue():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        address = request.form['address']
+        name = request.form['name']
+        capacity = request.form['capacity']
+        phone = request.form['phone']
+
+        query = """
+            INSERT INTO public."VENUE" (address, name, capacity, phone)
+            VALUES (%s, %s, %s, %s);
+        """
+        try:
+            execute_query(query, (address, name, capacity, phone))
+            flash("Venue added successfully!", "success")
+            return redirect(url_for('admin_dashboard'))
+        except:
+            flash("Error adding venue. Please try again.", "danger")
+
+    return render_template('add_venue.html')
+
 
 # 登出頁面
 @app.route('/logout')
