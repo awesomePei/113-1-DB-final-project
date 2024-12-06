@@ -5,7 +5,7 @@ import psycopg2 # type: ignore
 from tabulate import tabulate # type: ignore
 from threading import Lock
 
-DB_NAME = "final_example"
+DB_NAME = "DB Final"
 DB_USER = "postgres"
 DB_HOST = "127.0.0.1"
 DB_PORT = 5432

@@ -9,6 +9,7 @@ class SignUp(Action):
 
         # Read Username
         username = self.read_input(conn, "username")
+        # print(username)
         while username_exist(username):
             conn.send("Username exist, ".encode('utf-8'))
             username = self.read_input(conn, "another username")
