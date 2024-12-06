@@ -80,7 +80,7 @@ def purchase_ticket():
 
     return render_template('purchase_ticket.html')
 
-# admin 新增演唱會
+# admin 面板
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
     if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
@@ -100,7 +100,7 @@ def admin_dashboard():
         public_sale_time = request.form['public_sale_time']
 
         query = """
-            INSERT INTO public."CONCERT" (name, "time", "PR_capacity", presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
+            INSERT INTO public."CONCERT" (name, time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         execute_query(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
@@ -108,6 +108,35 @@ def admin_dashboard():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('admin_dashboard.html')  # This is the admin page with a form to add a concert
+
+# admin 新增演唱會
+@app.route('/add_concert', methods=['GET', 'POST'])
+def add_concert():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        # Admin submits the form to add a new concert
+        concert_name = request.form['concert_name']
+        concert_time = request.form['concert_time']
+        PR_capacity = request.form['pr_capacity']
+        presale_capacity = request.form['presale_capacity']
+        public_capacity = request.form['public_capacity']
+        venue_address = request.form['venue_address']
+        host_phone = request.form['host_phone']
+        presale_time = request.form['presale_time']
+        public_sale_time = request.form['public_sale_time']
+
+        query = """
+            INSERT INTO public."CONCERT" (name, time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """
+        execute_query(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
+        flash("Concert added successfully!", "success")
+        return redirect(url_for('admin_dashboard'))
+
+    return render_template('add_concert.html')  # This will render the form for adding a new concert
 
 
 # 登出頁面

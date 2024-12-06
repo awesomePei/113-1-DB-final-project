@@ -7,12 +7,19 @@
     <h1>Welcome to TicketVibe!</h1>
     {% if session.user_id %}
         <p>Logged in as {{ session.user_id }}</p>
-        <a href="/purchase_ticket">Purchase Ticket</a> |
-        <a href="/logout">Logout</a>
+        {% if session.isadmin %}
+            <!-- Admin user options -->
+            <a href="/add_concert">Add New Concert</a> |
+            <a href="/logout">Logout</a>
+        {% else %}
+            <!-- Regular user options -->
+            <a href="/purchase_ticket">Purchase Ticket</a> |
+            <a href="/logout">Logout</a>
+        {% endif %}
     {% else %}
+        <!-- If not logged in -->
         <a href="/register">Register</a> |
         <a href="/login">Login</a>
     {% endif %}
 </body>
 </html>
-
