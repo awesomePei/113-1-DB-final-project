@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, Admin</h1>
+
+    <!-- Link to Add Concert Page -->
+    <h2><a href="{{ url_for('add_concert') }}">Add a New Concert</a></h2>
+
+    <!-- Logout link -->
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
