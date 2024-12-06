@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TicketVibe</title>
+</head>
+<body>
+    <h1>Welcome to TicketVibe!</h1>
+    {% if session.user_id %}
+        <p>Logged in as {{ session.user_id }}</p>
+        <a href="/purchase_ticket">Purchase Ticket</a> |
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/register">Register</a> |
+        <a href="/login">Login</a>
+    {% endif %}
+</body>
+</html>
+
