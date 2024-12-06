@@ -280,6 +280,19 @@ def append_classroom(building_name, capacity_size, floor_number, room_name):
     db.commit()
     return classroom_id
 
+##################################################################
+def append_venue(address, name, capacity, phone):
+    query = """
+            Insert Into "VENUE" (address, name, capacity, phone)
+            Values (%s, %s, %s, %s)
+            RETURNING Classroom_id;
+            """
+    cur.execute(query, [address, name, capacity, phone])
+    venue_id = cur.fetchone()[0]
+    db.commit()
+    return venue_id
+##################################################################
+
 def classroom_exist(classroom_id):
     query = """
             Select count(*)
@@ -289,6 +302,17 @@ def classroom_exist(classroom_id):
     cur.execute(query, [classroom_id])
     return cur.fetchone()[0] > 0
 
+##################################################################
+def venue_exist(address):
+    query = """
+            Select count(*)
+            From "VENUE"
+            Where address = %s;
+            """
+    cur.execute(query, [address])
+    return cur.fetchone()[0] > 0
+##################################################################
+
 def remove_classroom(classroom_id):
     query = """
             Delete From "CLASSROOM"
@@ -297,6 +321,17 @@ def remove_classroom(classroom_id):
     
     cur.execute(query, [classroom_id])
     db.commit()
+
+##################################################################
+def remove_venue(address):
+    query = """
+            Delete From "VENUE"
+            Where address = %s;
+            """
+    
+    cur.execute(query, [address])
+    db.commit()
+##################################################################
 
 def update_classroom(classroom_id, item, new_value):
     query = f"""
@@ -343,6 +378,8 @@ def search_classroom(building_name, capacity_size, floor_number, room_name):
 
     return print_table(cur)
 
+##################################################################
+
 def append_course(course_name, instructor_name, department_name, lecture_time, commit=True):
     query = """
             Insert Into "COURSE" (Course_name, Instructor_name, Department_name, Lecture_time)
@@ -357,6 +394,24 @@ def append_course(course_name, instructor_name, department_name, lecture_time, c
     if commit:
         db.commit()
     return course_id
+
+##################################################################
+def append_concert(concert_name, concert_time, pr_capacity, presale_capacity, public_capacity, 
+                   venue_address, host_phone, presale_time, public_sale_time, commit=True):
+    query = """
+            Insert Into "CONCERT" (concert_name, concert_time, pr_capacity, presale_capacity,
+                                public_capacity, venue_address, host_phone, presale_time, public_sale_time)
+            Values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING Course_id;
+            """
+    cur.execute(query, [concert_name, concert_time, pr_capacity, presale_capacity, public_capacity, 
+                   venue_address, host_phone, presale_time, public_sale_time])
+    print(f'After exec')
+    course_id = cur.fetchone()[0]
+    if commit:
+        db.commit()
+    return course_id
+##################################################################
 
 def upload_courses(df):
     print(tabulate(df, headers = 'keys', tablefmt = 'psql'))
@@ -396,6 +451,17 @@ def remove_course(course_id):
     cur.execute(query, [course_id])
     db.commit()
 
+##################################################################
+def remove_concert(concert_name, concert_time):
+    query = """
+            Delete From "CONCERT"
+            Where concert_name = %s and concert_time = %s;
+            """
+    
+    cur.execute(query, [concert_name, concert_time])
+    db.commit()
+##################################################################
+
 def update_course(course_id, item, new_value):
     query = f"""
             Update "COURSE"
@@ -416,6 +482,16 @@ def list_user_info(user_id):
     cur.execute(cmd, [user_id])
     return print_table(cur)
 
+##################################################################
+def list_users_info(userid):
+    query = """
+            Select *
+            From "USERS"
+            Where userid = %s;
+            """
+    cur.execute(query, [userid])
+    return print_table(cur)
+##################################################################
 
 def search_study_event(course_name):
     query = f"""
@@ -428,3 +504,15 @@ def search_study_event(course_name):
     cur.execute(query)
 
     return print_table(cur)
+
+##################################################################
+def search_concert(venue_address):
+    query = f"""
+            Select *
+            From "CONCERT" As con
+            Join "VENUE" As v On con.venue_address = v.address
+            Where v.address Like '%{venue_address}%';
+            """
+    cur.execute(query)
+    return print_table(cur)
+##################################################################
