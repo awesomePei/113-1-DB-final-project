@@ -4,20 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #52b6dd;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 24px;
+            margin: 15px 0;
+            width: 100%; /* Set the width of h2 to 100% of the parent container */
+            text-align: left; /* Center-align text inside the h2 */
+            box-sizing: border-box;
+        }
+        a {
+            text-decoration: none;
+            color: #52b6dd;
+            font-size: 18px;
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #52b6dd;
+            color: white;
+        }
+        .logout-link {
+            color: #ff5a5f;
+            font-size: 18px;
+            text-align: center;
+            display: block;
+            margin-top: 30px;
+        }
+        .logout-link:hover {
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome, Admin</h1>
-
-    <!-- Link to Add Concert Page -->
-    <h2><a href="{{ url_for('add_concert') }}">Add a New Concert</a></h2>
-
-    <!-- Link to Add Host Page -->
-    <h2><a href="{{ url_for('add_host') }}">Add a New Host</a></h2>
-
-    <!-- Link to Add Venue Page -->
-    <h2><a href="{{ url_for('add_venue') }}">Add a New Venue</a></h2>
-
-    <!-- Logout link -->
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <div class="container">
+        <h1>Welcome, Admin</h1>
+        <h2><a href="{{ url_for('add_concert') }}">Add a New Concert</a></h2>
+        <h2><a href="{{ url_for('add_host') }}">Add a New Host</a></h2>
+        <h2><a href="{{ url_for('add_venue') }}">Add a New Venue</a></h2>
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+    </div>
 </body>
 </html>

@@ -4,44 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Concert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Make sure the content aligns from the top */
+            min-height: 100vh; /* Ensure at least full viewport height */
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #52b6dd;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], input[type="datetime-local"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2f96bf;
+        }
+        .link {
+            text-decoration: none;
+            color: #52b6dd;
+            font-size: 18px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .link:hover {
+            color: #2f96bf;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add New Concert</h1>
+    <div class="container">
+        <h1>Add New Concert</h1>
 
-    <form action="{{ url_for('add_concert') }}" method="POST">
-        <label for="concert_name">Concert Name:</label>
-        <input type="text" id="concert_name" name="concert_name" required><br><br>
+        <form action="{{ url_for('add_concert') }}" method="POST">
+            <label for="concert_name">Concert Name:</label>
+            <input type="text" id="concert_name" name="concert_name" required><br>
 
-        <label for="concert_time">Concert Time:</label>
-        <input type="datetime-local" id="concert_time" name="concert_time" required><br><br>
+            <label for="concert_time">Concert Time:</label>
+            <input type="datetime-local" id="concert_time" name="concert_time" required><br>
 
-        <label for="PR_capacity">PR Capacity:</label>
-        <input type="number" id="PR_capacity" name="PR_capacity" required><br><br>
+            <label for="PR_capacity">PR Capacity:</label>
+            <input type="number" id="PR_capacity" name="PR_capacity" required><br>
 
-        <label for="presale_capacity">Presale Capacity:</label>
-        <input type="number" id="presale_capacity" name="presale_capacity" required><br><br>
+            <label for="presale_capacity">Presale Capacity:</label>
+            <input type="number" id="presale_capacity" name="presale_capacity" required><br>
 
-        <label for="public_capacity">Public Capacity:</label>
-        <input type="number" id="public_capacity" name="public_capacity" required><br><br>
+            <label for="public_capacity">Public Capacity:</label>
+            <input type="number" id="public_capacity" name="public_capacity" required><br>
 
-        <label for="venue_address">Venue Address:</label>
-        <input type="text" id="venue_address" name="venue_address" required><br><br>
+            <label for="venue_address">Venue Address:</label>
+            <input type="text" id="venue_address" name="venue_address" required><br>
 
-        <label for="host_phone">Host Phone:</label>
-        <input type="text" id="host_phone" name="host_phone" required><br><br>
+            <label for="host_phone">Host Phone:</label>
+            <input type="text" id="host_phone" name="host_phone" required><br>
 
-        <label for="presale_time">Presale Time:</label>
-        <input type="datetime-local" id="presale_time" name="presale_time" required><br><br>
+            <label for="presale_time">Presale Time:</label>
+            <input type="datetime-local" id="presale_time" name="presale_time" required><br>
 
-        <label for="public_sale_time">Public Sale Time:</label>
-        <input type="datetime-local" id="public_sale_time" name="public_sale_time" required><br><br>
+            <label for="public_sale_time">Public Sale Time:</label>
+            <input type="datetime-local" id="public_sale_time" name="public_sale_time" required><br>
 
-        <button type="submit">Add Concert</button>
-    </form>
+            <button type="submit">Add Concert</button>
+        </form>
 
-    <br>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a> |
-    <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a> |
+        <a href="{{ url_for('logout') }}" class="link">Logout</a>
+    </div>
 </body>
 </html>
-

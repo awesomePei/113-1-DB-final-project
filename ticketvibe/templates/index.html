@@ -1,25 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TicketVibe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #52b6dd;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #52b6dd;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 10px 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #2f96bf;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .admin-options {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .user-options {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to TicketVibe!</h1>
-    {% if session.user_id %}
-        <p>Logged in as {{ session.user_id }}</p>
-        {% if session.isadmin %}
-            <!-- Admin user options -->
-            <a href="/add_concert">Add New Concert</a> |
-            <a href="/logout">Logout</a>
+    <div class="container">
+        <h1>Welcome to TicketVibe!</h1>
+        {% if session.user_id %}
+            <p>Logged in as {{ session.user_id }}</p>
+            {% if session.isadmin %}
+                <div class="admin-options">
+                    <a href="/add_concert">Add New Concert</a> |
+                    <a href="/logout">Logout</a>
+                </div>
+            {% else %}
+                <div class="user-options">
+                    <a href="/purchase_ticket">Purchase Ticket</a> |
+                    <a href="/logout">Logout</a>
+                </div>
+            {% endif %}
         {% else %}
-            <!-- Regular user options -->
-            <a href="/purchase_ticket">Purchase Ticket</a> |
-            <a href="/logout">Logout</a>
+        <br>
+            <div class="options">
+                <a href="/register">Register</a> |
+                <a href="/login">Login</a>
+            </div>
         {% endif %}
-    {% else %}
-        <!-- If not logged in -->
-        <a href="/register">Register</a> |
-        <a href="/login">Login</a>
-    {% endif %}
+    </div>
 </body>
 </html>
