@@ -216,6 +216,38 @@ def add_performer():
 
     return render_template('add_performer.html')
 
+# admin 註冊 performer 在某場 concert 中 perform
+@app.route('/register_performance', methods=['GET', 'POST'])
+def register_performance():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if user is admin
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        performerID = request.form['performerID']
+        concert_name = request.form['concert_name']
+        concert_time = request.form['concert_time']
+
+        query = """
+            INSERT INTO public."PERFORM" ("performerID", concert_name, concert_time)
+            VALUES (%s, %s, %s)
+        """
+        try:
+            execute_query(query, (performerID, concert_name, concert_time))
+            flash("Performance registered successfully!", "success")
+            return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            flash(f"Error registering performance: {str(e)}", "danger")
+
+    # Define your queries
+    performers_query = """SELECT "performerID", name FROM public."PERFORMER" """
+    concerts_query = """SELECT name, "time" FROM public."CONCERT" """
+
+    # Fetch data using execute_query
+    performers = execute_query(performers_query, fetch_all=True)
+    concerts = execute_query(concerts_query, fetch_all=True)
+
+    return render_template('register_performance.html', performers=performers, concerts=concerts)
+
 
 # 查詢演唱會
 @app.route('/search_concert')
