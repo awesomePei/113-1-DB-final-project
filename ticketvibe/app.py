@@ -190,6 +190,33 @@ def add_venue():
 
     return render_template('add_venue.html')
 
+# admin 新增 performer
+@app.route('/add_performer', methods=['GET', 'POST'])
+def add_performer():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        performerID = request.form['performerID']
+        name = request.form['name']
+        company_name = request.form['company_name']
+        company_phone = request.form['company_phone']
+
+        query = """
+            INSERT INTO public."PERFORMER" ("performerID", name, company_name, company_phone)
+            VALUES (%s, %s, %s, %s)
+        """
+        try:
+            execute_query(query, (performerID, name, company_name, company_phone))
+            flash("Performer added successfully!", "success")
+            return redirect(url_for('admin_dashboard'))
+        except:
+            flash("Error adding venue. Please try again.", "danger")
+
+    return render_template('add_performer.html')
+
+
 # 查詢演唱會
 @app.route('/search_concert')
 def search_concert():
