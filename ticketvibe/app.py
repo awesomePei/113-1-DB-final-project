@@ -120,7 +120,15 @@ def buy_ticket():
 
     # Fetch available concerts and seats
     concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
-    seats_query = 'SELECT "seatID", price FROM public."SEAT_PRICE"'
+    seats_query = '''
+                    SELECT "seatID", price 
+                    FROM public."SEAT_PRICE" sp
+                    WHERE NOT EXISTS (
+                        SELECT 1 
+                        FROM public."TICKET" t 
+                        WHERE t."seatID" = sp."seatID"
+                    )
+                    '''
     concerts = execute_query(concerts_query, fetch_all=True)
     seats = execute_query(seats_query, fetch_all=True)
 
@@ -306,6 +314,8 @@ def set_seat_price():
         concert_time = request.form.get('concert_time')
         seat_id = request.form.get('seatID')
         price = request.form.get('price')
+
+        print(concert_name, seat_id, price)
 
         query = """
             INSERT INTO public."SEAT_PRICE" (concert_name, concert_time, "seatID", price)
