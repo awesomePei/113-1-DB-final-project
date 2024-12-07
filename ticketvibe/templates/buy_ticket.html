@@ -10,6 +10,7 @@
             background-color: #f4f4f9;
             color: #333;
             padding: 20px;
+            margin: 0;
         }
         .container {
             background: #fff;
@@ -17,23 +18,25 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
         }
         h1 {
             color: #52b6dd;
+            margin-bottom: 20px;
         }
         form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
         label {
             font-weight: bold;
         }
         select, input, button {
-            padding: 8px;
+            padding: 10px;
             font-size: 16px;
             width: 100%;
+            box-sizing: border-box;
         }
         button {
             background-color: #52b6dd;
@@ -41,9 +44,15 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #2f96bf;
+        }
+        .note {
+            font-size: 14px;
+            color: #555;
+            margin-top: -10px;
         }
     </style>
 </head>
@@ -51,6 +60,7 @@
     <div class="container">
         <h1>Buy Ticket</h1>
         <form action="{{ url_for('buy_ticket') }}" method="POST">
+            <!-- Concert Selection -->
             <label for="concert_name">Concert Name:</label>
             <select id="concert_name" name="concert_name" required>
                 {% for concert in concerts %}
@@ -58,9 +68,11 @@
                 {% endfor %}
             </select>
 
+            <!-- Concert Time -->
             <label for="concert_time">Concert Time:</label>
             <input type="datetime-local" id="concert_time" name="concert_time" required>
 
+            <!-- Seat Selection -->
             <label for="seatID">Seat ID:</label>
             <select id="seatID" name="seatID" required>
                 {% for seat in seats %}
@@ -68,6 +80,7 @@
                 {% endfor %}
             </select>
 
+            <!-- Ticket Type -->
             <label for="type">Ticket Type:</label>
             <select id="type" name="type" required>
                 <option value="PR">PR</option>
@@ -75,12 +88,14 @@
                 <option value="Public">Public</option>
             </select>
 
+            <!-- Payment Method -->
             <label for="payment">Payment Method:</label>
             <select id="payment" name="payment" required>
                 <option value="CreditCard">Credit Card</option>
                 <option value="ATM_transfer">ATM Transfer</option>
             </select>
 
+            <!-- Submit Button -->
             <button type="submit">Buy Ticket</button>
         </form>
     </div>
