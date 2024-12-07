@@ -248,6 +248,35 @@ def register_performance():
 
     return render_template('register_performance.html', performers=performers, concerts=concerts)
 
+# admin 定票價
+@app.route('/set_seat_price', methods=['GET', 'POST'])
+def set_seat_price():
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if admin is logged in
+        flash("Access denied. Admins only.", "danger")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        concert_name = request.form.get('concert_name')
+        concert_time = request.form.get('concert_time')
+        seat_id = request.form.get('seatID')
+        price = request.form.get('price')
+
+        query = """
+            INSERT INTO public."SEAT_PRICE" (concert_name, concert_time, "seatID", price)
+            VALUES (%s, %s, %s, %s)
+        """
+        try:
+            execute_query(query, (concert_name, concert_time, seat_id, price))
+            flash("Seat price set successfully!", "success")
+            return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            flash(f"Error setting seat price: {e}", "danger")
+
+    # Fetch available concerts for the form dropdown
+    concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
+    concerts = execute_query(concerts_query, fetch_all=True)
+    return render_template('set_seat_price.html', concerts=concerts)
+
 
 # 查詢演唱會
 @app.route('/search_concert')

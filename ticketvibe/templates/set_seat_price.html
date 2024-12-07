@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Seat Price</title>
+    <style>
+        /* Add basic styling similar to other admin pages */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #52b6dd;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label, select, input {
+            width: 100%;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2f96bf;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Set Seat Price</h1>
+        <form action="{{ url_for('set_seat_price') }}" method="POST">
+            <label for="concert_name">Concert Name:</label>
+            <select id="concert_name" name="concert_name" required>
+                {% for concert in concerts %}
+                    <option value="{{ concert['name'] }}">{{ concert['name'] }} ({{ concert['time'] }})</option>
+                {% endfor %}
+            </select>
+
+            <label for="concert_time">Concert Time:</label>
+            <input type="datetime-local" id="concert_time" name="concert_time" required>
+
+            <label for="seatID">Seat ID:</label>
+            <input type="text" id="seatID" name="seatID" required>
+
+            <label for="price">Price (in currency):</label>
+            <input type="number" id="price" name="price" required>
+
+            <button type="submit">Set Price</button>
+        </form>
+
+        <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a>
+    </div>
+</body>
+</html>
+
