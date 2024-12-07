@@ -48,7 +48,7 @@ def login():
             session['isadmin'] = user['isadmin']
             flash("Login successful!", "success")
             if user['isadmin']:  # If the user is an admin, redirect to admin dashboard
-                return redirect(url_for('admin_dashboard'))
+                return redirect(url_for('index'))
             else:
                 return redirect(url_for('index'))
         else:
