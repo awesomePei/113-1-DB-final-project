@@ -111,7 +111,7 @@ def buy_ticket():
         """
         try:
             execute_query(insert_query, (
-                new_ticket_id, False, seat_id, ticket_type, refund_deadline, 0, payment_method, user_id, concert_name, concert_time
+                new_ticket_id, False, seat_id, ticket_type, refund_deadline, False, payment_method, user_id, concert_name, concert_time
             ))
             flash("Ticket purchased successfully!", "success")
             return redirect(url_for('my_tickets'))
