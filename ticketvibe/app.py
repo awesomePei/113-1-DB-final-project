@@ -80,6 +80,52 @@ def purchase_ticket():
 
     return render_template('purchase_ticket.html')
 
+# NEW 購票頁面
+@app.route('/buy_ticket', methods=['GET', 'POST'])
+def buy_ticket():
+    if 'user_id' not in session:  # Check if user is logged in
+        flash("You must be logged in to buy a ticket.", "danger")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        seat_id = request.form.get('seatID')
+        ticket_type = request.form.get('type')
+        payment_method = request.form.get('payment')
+        user_id = session['user_id']
+        concert_name = request.form.get('concert_name')
+        concert_time = request.form.get('concert_time')
+
+        # Generate ticket ID (getting the max ticketID + 1)
+        ticket_id_query = 'SELECT COALESCE(MAX("ticketID"), 0) + 1 AS new_id FROM public."TICKET"'
+        new_ticket_id = execute_query(ticket_id_query, fetch_one=True)['new_id']
+        
+        # Refund deadline query (7 days from now)
+        refund_deadline_query = "SELECT CURRENT_DATE + INTERVAL '7 days' AS refund_ddl"
+        refund_deadline = execute_query(refund_deadline_query, fetch_one=True)['refund_ddl']
+
+        # Prepare the query to insert the ticket into the database
+        insert_query = """
+            INSERT INTO public."TICKET" 
+            ("ticketID", collected, "seatID", type, order_time, refund_ddl, refund_status, payment, "userID", concert_name, concert_time)
+            VALUES (%s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s)
+        """
+        try:
+            execute_query(insert_query, (
+                new_ticket_id, False, seat_id, ticket_type, refund_deadline, 0, payment_method, user_id, concert_name, concert_time
+            ))
+            flash("Ticket purchased successfully!", "success")
+            return redirect(url_for('my_tickets'))
+        except Exception as e:
+            flash(f"Error purchasing ticket: {e}", "danger")
+
+    # Fetch available concerts and seats
+    concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
+    seats_query = 'SELECT "seatID", price FROM public."SEAT_PRICE"'
+    concerts = execute_query(concerts_query, fetch_all=True)
+    seats = execute_query(seats_query, fetch_all=True)
+
+    return render_template('buy_ticket.html', concerts=concerts, seats=seats)
+
 # admin 面板
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
