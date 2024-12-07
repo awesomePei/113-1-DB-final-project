@@ -49,10 +49,18 @@
         button:hover {
             background-color: #2f96bf;
         }
-        .note {
-            font-size: 14px;
-            color: #555;
-            margin-top: -10px;
+        .options {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .options a {
+            text-decoration: none;
+            color: #52b6dd;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        .options a:hover {
+            color: #2f96bf;
         }
     </style>
 </head>
@@ -68,9 +76,9 @@
                 {% endfor %}
             </select>
 
-            <!-- Concert Time -->
+            <!-- Concert Time
             <label for="concert_time">Concert Time:</label>
-            <input type="datetime-local" id="concert_time" name="concert_time" required>
+            <input type="datetime-local" id="concert_time" name="concert_time" required> -->
 
             <!-- Seat Selection -->
             <label for="seatID">Seat ID:</label>
@@ -98,6 +106,11 @@
             <!-- Submit Button -->
             <button type="submit">Buy Ticket</button>
         </form>
+
+        <div class="options">
+            <a href="/search_concert">Back to Concerts</a>｜
+            <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+        </div>
     </div>
 </body>
 </html>
