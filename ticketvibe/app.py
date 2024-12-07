@@ -93,7 +93,7 @@ def buy_ticket():
         payment_method = request.form.get('payment')
         user_id = session['user_id']
         concert_name = request.form.get('concert_name')
-        concert_time = request.form.get('concert_time')
+        concert_time = request.form.get('concert_time')  # Will now get the hidden field value
 
         # Generate ticket ID (getting the max ticketID + 1)
         ticket_id_query = 'SELECT COALESCE(MAX("ticketID"), 0) + 1 AS new_id FROM public."TICKET"'
