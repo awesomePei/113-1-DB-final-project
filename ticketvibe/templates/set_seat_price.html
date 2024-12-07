@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Set Seat Price</title>
     <style>
-        /* Add basic styling similar to other admin pages */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -24,6 +23,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px;
+            box-sizing: border-box;
+            text-align: center;
         }
         h1 {
             color: #52b6dd;
@@ -33,11 +34,23 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
+            align-items: center;
         }
-        label, select, input {
-            width: 100%;
+        label {
             font-size: 16px;
+            margin-bottom: 5px;
+            color: #555;
+            width: 100%;
+            text-align: left;
+        }
+        select, input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
         }
         button {
             padding: 10px 20px;
@@ -47,9 +60,20 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #2f96bf;
+        }
+        .link {
+            text-decoration: none;
+            color: #52b6dd;
+            font-size: 18px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .link:hover {
+            color: #2f96bf;
         }
     </style>
 </head>
@@ -80,4 +104,3 @@
     </div>
 </body>
 </html>
-

@@ -70,7 +70,7 @@
             <p>Logged in as {{ session.user_id }}</p>
             {% if session.isadmin %}
                 <div class="admin-options">
-                    <a href="/add_concert">Add New Concert</a> |
+                    <a href="{{ url_for('admin_dashboard') }}" class="link">Dashboard</a> |
                     <a href="/logout">Logout</a>
                 </div>
             {% else %}

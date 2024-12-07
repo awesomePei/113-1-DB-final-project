@@ -34,18 +34,17 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             align-items: center;
         }
         label {
-            text-align: left;
             font-size: 16px;
             margin-bottom: 5px;
             color: #555;
             width: 100%;
             text-align: left;
         }
-        input[type="text"], input[type="number"] {
+        input[type="datetime-local"], select {
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -87,17 +86,17 @@
                 {% for performer in performers %}
                     <option value="{{ performer.performerID }}">{{ performer.performerID }} - {{ performer.name }}</option>
                 {% endfor %}
-            </select><br>
+            </select>
 
             <label for="concert_name">Select Concert:</label>
             <select id="concert_name" name="concert_name" required>
                 {% for concert in concerts %}
                     <option value="{{ concert.name }}">{{ concert.name }} - {{ concert.time }}</option>
                 {% endfor %}
-            </select><br>
+            </select>
 
             <label for="concert_time">Concert Time:</label>
-            <input type="datetime-local" id="concert_time" name="concert_time" required><br>
+            <input type="datetime-local" id="concert_time" name="concert_time" required>
 
             <button type="submit">Register Performance</button>
         </form>
@@ -106,4 +105,3 @@
     </div>
 </body>
 </html>
-

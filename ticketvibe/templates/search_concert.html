@@ -71,6 +71,9 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="/">Back to Home</a>
+    <div style="display: inline-flex; gap: 10px;">
+        <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a>
+    </div>
+    
 </body>
 </html>
