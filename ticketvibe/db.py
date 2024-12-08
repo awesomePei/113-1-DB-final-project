@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor
 
 def get_connection():
     return psycopg2.connect(
-        dbname="DB Final",
+        dbname="ticketvibe",
         user="postgres",
         password="0000",
         host="localhost",

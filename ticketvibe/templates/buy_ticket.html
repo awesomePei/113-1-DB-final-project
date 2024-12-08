@@ -69,14 +69,20 @@
         <h1>Buy Ticket</h1>
         <form action="{{ url_for('buy_ticket') }}" method="POST">
             <!-- Concert Selection -->
+            <!-- Concert Selection -->
             <label for="concert_name">Concert Name:</label>
             <select id="concert_name" name="concert_name" onchange="updateConcertTime()" required>
                 {% for concert in concerts %}
-                    <option value="{{ concert['name'] }}" data-time="{{ concert['time'] }}">
+                    <option 
+                        value="{{ concert['name'] }}" 
+                        data-time="{{ concert['time'] }}" 
+                        data-presale="{{ concert['presale_time'] }}" 
+                        data-public="{{ concert['public_sale_time'] }}">
                         {{ concert['name'] }} ({{ concert['time'] }})
                     </option>
                 {% endfor %}
             </select>
+
 
             <!-- Hidden input to store the selected concert's time -->
             <input type="hidden" id="concert_time" name="concert_time">
