@@ -165,15 +165,18 @@ def buy_ticket_seat():
         return redirect(url_for('buy_ticket_payment'))
 
     seats_query = '''
-        SELECT "seatID", price 
+    SELECT "seatID", price 
         FROM public."SEAT_PRICE" sp
         WHERE sp.concert_name = %s AND sp.concert_time = %s
         AND NOT EXISTS (
             SELECT 1 
             FROM public."TICKET" t 
-            WHERE t."seatID" = sp."seatID"
+            WHERE t."seatID" = sp."seatID" 
+            AND t.concert_name = sp.concert_name
+            AND t.concert_time = sp.concert_time
         )
     '''
+
     seats = execute_query(seats_query, (concert['name'], concert['time']), fetch_all=True)
     return render_template('buy_ticket_seat.html', seats=seats, concert=concert)
 
