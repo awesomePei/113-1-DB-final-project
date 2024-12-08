@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from db import execute_query
 
+
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Change this to a secure key
 
@@ -275,9 +276,13 @@ def my_ticket():
         flash("You must be logged in to view your tickets.", "danger")
         return redirect(url_for('login'))
 
+    # Query to get the current time from the database
+    current_time_query = "SELECT NOW()::date AS current_time"  # Convert to date directly in SQL
+    current_time = execute_query(current_time_query, fetch_one=True)['current_time']
+
     user_id = session['user_id']
     query = '''
-        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, t.collected, t.refund_status, c.name AS concert_name, c."time" AS concert_time 
+        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, t.collected, t.refund_status, t.refund_ddl, c.name AS concert_name, c."time" AS concert_time 
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name AND t.concert_time = c."time"
         WHERE t."userID" = %s
@@ -285,7 +290,8 @@ def my_ticket():
     '''
     tickets = execute_query(query, (user_id,), fetch_all=True)
 
-    return render_template('my_ticket.html', tickets=tickets)
+    return render_template('my_ticket.html', tickets=tickets, current_time=current_time)
+
 
 @app.route('/refund_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 def refund_ticket(ticket_id):
@@ -297,14 +303,23 @@ def refund_ticket(ticket_id):
     # 查詢票券資訊
     user_id = session['user_id']
     ticket_query = '''
-        SELECT * FROM public."TICKET" 
-        WHERE "ticketID" = %s AND "userID" = %s AND refund_status = False
+        SELECT t.*, t.refund_ddl FROM public."TICKET" t
+        WHERE t."ticketID" = %s AND t."userID" = %s AND t.refund_status = False
     '''
     ticket = execute_query(ticket_query, (ticket_id, user_id), fetch_one=True)
 
     # 如果票券不存在或無法退款，返回錯誤
     if not ticket:
         flash("Invalid ticket or ticket cannot be refunded.", "danger")
+        return redirect(url_for('my_ticket'))
+
+    # 確認當前時間是否在 refund_ddl 之前
+    current_time_query = "SELECT NOW() AS current_time"
+    current_time = execute_query(current_time_query, fetch_one=True)['current_time']
+    refund_ddl = ticket['refund_ddl']
+
+    if current_time > refund_ddl:
+        flash("Refund period has expired. You cannot refund this ticket.", "danger")
         return redirect(url_for('my_ticket'))
 
     if request.method == 'POST':
