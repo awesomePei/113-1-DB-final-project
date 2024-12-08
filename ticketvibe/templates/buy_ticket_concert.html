@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Concert</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2f96bf;
+        }
+
+        .back-link {
+            display: block;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #52b6dd;
+            text-align: left;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Select Concert</h1>
+        <form method="POST">
+            <label for="concert_name">Concert Name:</label>
+            <select id="concert_name" name="concert_name" onchange="updateConcertTime()" required>
+                {% for concert in concerts %}
+                    <option value="{{ concert['name'] }}" data-time="{{ concert['time'] }}">
+                        {{ concert['name'] }} ({{ concert['time'] }})
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="hidden" id="concert_time" name="concert_time">
+            <button type="submit">Next</button>
+            <br>
+            <a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+        </form>
+    </div>
+
+    <script>
+        function updateConcertTime() {
+            const concertSelect = document.getElementById('concert_name');
+            const selectedOption = concertSelect.options[concertSelect.selectedIndex];
+            const concertTime = selectedOption.getAttribute('data-time');
+            document.getElementById('concert_time').value = concertTime;
+        }
+        document.addEventListener('DOMContentLoaded', updateConcertTime);
+    </script>
+</body>
+</html>

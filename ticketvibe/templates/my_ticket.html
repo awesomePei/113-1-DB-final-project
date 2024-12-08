@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #52b6dd;
+        }
+        .ticket-list {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .ticket-list th, .ticket-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .ticket-list th {
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .ticket-list tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .ticket-list tr:hover {
+            background-color: #ddd;
+        }
+        .back-link {
+            display: block;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #52b6dd;
+            text-align: left;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Tickets</h1>
+    {% if tickets %}
+        <table class="ticket-list">
+            <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Concert</th>
+                    <th>Date & Time</th>
+                    <th>Seat</th>
+                    <th>Type</th>
+                    <th>Payment</th>
+                    <th>Order Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.ticketID }}</td>
+                        <td>{{ ticket.concert_name }}</td>
+                        <td>{{ ticket.concert_time }}</td>
+                        <td>{{ ticket.seatID }}</td>
+                        <td>{{ ticket.type }}</td>
+                        <td>{{ ticket.payment }}</td>
+                        <td>{{ ticket.order_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You haven't purchased any tickets yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+</body>
+</html>

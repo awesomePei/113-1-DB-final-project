@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Ticket</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ticket-details {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .ticket-details p {
+            margin: 8px 0;
+        }
+
+        .info {
+            font-weight: bold;
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2f96bf;
+        }
+        .back-link {
+            display: block;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #52b6dd;
+            text-align: left;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Ticket</h1>
+        <!-- Ticket Information -->
+        <div class="ticket-details">
+            <p><span class="info">Concert:</span> {{ concert.name }} ({{ concert.time }})</p>
+            <p><span class="info">Seat:</span> {{ seat_id }} </p>
+            <p><span class="info">Payment Method:</span> {{ payment }}</p>
+        </div>
+
+        <!-- Confirmation Form -->
+        <form method="POST">
+            <button type="submit">Confirm and Buy</button>
+
+            <!-- Back Link -->
+            <a href="{{ url_for('buy_ticket_payment') }}" class="back-link">Back</a>
+        </form>
+    </div>
+</body>
+</html>
