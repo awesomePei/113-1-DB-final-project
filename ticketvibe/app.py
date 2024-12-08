@@ -541,6 +541,32 @@ def set_seat_price():
     concerts = execute_query(concerts_query, fetch_all=True)
     return render_template('set_seat_price.html', concerts=concerts)
 
+# 查詢使用者
+@app.route('/search_user', methods=['GET', 'POST'])
+def search_user():
+    # 如果是 POST 請求，執行搜尋
+    if request.method == 'POST':
+        search_query = request.form.get('search_query')
+        
+        # 根據搜尋條件查詢用戶（使用LIKE進行模糊匹配）
+        user_query = '''
+            SELECT * FROM public."USERS"
+            WHERE userid LIKE %s OR email LIKE %s
+        '''
+        # 執行查詢並過濾結果
+        users = execute_query(user_query, ('%' + search_query + '%', '%' + search_query + '%'), fetch_all=True)
+
+        # 返回搜尋結果到模板
+        return render_template('search_user.html', users=users)
+
+    # 如果是 GET 請求，則列出所有使用者
+    users_query = '''SELECT * FROM public."USERS";'''
+    users = execute_query(users_query, fetch_all=True)
+
+    # 返回所有使用者到模板
+    return render_template('search_user.html', users=users)
+
+
 
 # 查詢演唱會
 @app.route('/search_concert')
