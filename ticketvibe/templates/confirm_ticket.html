@@ -106,18 +106,5 @@
             <a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
         </form>
     </div>
-    {% if error_message %}
-        <script>
-            showError("{{ error_message }}");
-        </script>
-    {% endif %}
 </body>
-<script>
-    function showError(message) {
-        if (message) {
-            alert(message); // 使用原生 alert
-            window.location.href = "{{ url_for('buy_ticket_concert') }}"; // 返回選擇演唱會
-        }
-    }
-</script>
 </html>
