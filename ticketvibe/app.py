@@ -134,6 +134,28 @@ def login():
 #     seats = execute_query(seats_query, fetch_all=True)
 
 #     return render_template('buy_ticket.html', concerts=concerts, seats=seats)
+# user 查詢演唱會
+@app.route('/user_search_concert')
+def user_search_concert():
+    from datetime import datetime
+
+    current_time = datetime.now()
+
+    # Print current time for debugging
+    print(f"Current time: {current_time}")
+
+    query = '''
+        SELECT * FROM public."CONCERT"
+        WHERE "time" > %s
+    '''
+    concerts = execute_query(query, (current_time,), fetch_all=True)
+
+    # Print concerts for debugging
+    print(f"Concerts found: {concerts}")
+
+    return render_template('user_search_concert.html', concerts=concerts)
+
+    return render_template('user_search_concert.html', concerts=concerts)
 
 # buy ticket 選演唱會
 @app.route('/buy_ticket_concert', methods=['GET', 'POST'])
