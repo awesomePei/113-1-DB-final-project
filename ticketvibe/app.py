@@ -203,13 +203,39 @@ def confirm_ticket():
     seat_id = session['selected_seat']
     payment_method = session['payment_method']
 
+    timing_query = """
+        SELECT presale_time, public_sale_time
+        FROM public."CONCERT"
+        WHERE name = %s AND "time" = %s
+    """
+    timing = execute_query(timing_query, (concert['name'], concert['time']), fetch_one=True)
+
+    if not timing:
+        flash("Concert timing information is unavailable.", "danger")
+        return redirect(url_for('buy_ticket_concert'))
+
+    presale_time = timing['presale_time']
+    public_time = timing['public_sale_time']
+
+    # 判断 ticket_type
+    current_time_query = "SELECT NOW() AS current_time"
+    current_time = execute_query(current_time_query, fetch_one=True)['current_time']
+
+    if presale_time <= current_time < public_time:
+        ticket_type = "Presale"
+    elif current_time >= public_time:
+        ticket_type = "Public"
+    else:
+        flash("Tickets are not on sale at this time.", "warning")
+        return redirect(url_for('buy_ticket_concert'))
+
+
     if request.method == 'POST':
         ticket_id_query = 'SELECT COALESCE(MAX("ticketID"), 0) + 1 AS new_id FROM public."TICKET"'
         new_ticket_id = execute_query(ticket_id_query, fetch_one=True)['new_id']
         
         # 先默認 ticket type 是 public
-
-        ticket_type = "Public"
+        # ticket_type = "Public"
 
         refund_deadline_query = "SELECT CURRENT_DATE + INTERVAL '7 days' AS refund_ddl"
         refund_deadline = execute_query(refund_deadline_query, fetch_one=True)['refund_ddl']
