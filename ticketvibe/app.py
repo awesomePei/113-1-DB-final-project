@@ -156,13 +156,13 @@ def buy_ticket_concert():
 def buy_ticket_seat():
     if 'user_id' not in session or 'selected_concert' not in session:
         flash("Please select a concert first.", "danger")
-        return redirect(url_for('buy_ticket_step1'))
+        return redirect(url_for('buy_ticket_concert'))
 
     concert = session['selected_concert']
     if request.method == 'POST':
         seat_id = request.form.get('seatID')
         session['selected_seat'] = seat_id
-        return redirect(url_for('buy_ticket_step3'))
+        return redirect(url_for('buy_ticket_payment'))
 
     seats_query = '''
         SELECT "seatID", price 
@@ -179,10 +179,10 @@ def buy_ticket_seat():
 
 #buy ticket 付款方式
 @app.route('/buy_ticket_payment', methods=['GET', 'POST'])
-def buy_ticket_step3():
+def buy_ticket_payment():
     if 'user_id' not in session or 'selected_seat' not in session:
         flash("Please select a seat first.", "danger")
-        return redirect(url_for('buy_ticket_step2'))
+        return redirect(url_for('buy_ticket_seat'))
 
     if request.method == 'POST':
         payment_method = request.form.get('payment')
@@ -196,7 +196,7 @@ def buy_ticket_step3():
 def confirm_ticket():
     if 'user_id' not in session or 'payment_method' not in session:
         flash("Please complete the ticket selection process.", "danger")
-        return redirect(url_for('buy_ticket_step1'))
+        return redirect(url_for('buy_ticket_payment'))
 
     user_id = session['user_id']
     concert = session['selected_concert']
@@ -209,7 +209,7 @@ def confirm_ticket():
         
         # 先默認 ticket type 是 public
 
-        ticket_type = "public"
+        ticket_type = "Public"
 
         refund_deadline_query = "SELECT CURRENT_DATE + INTERVAL '7 days' AS refund_ddl"
         refund_deadline = execute_query(refund_deadline_query, fetch_one=True)['refund_ddl']
@@ -225,7 +225,9 @@ def confirm_ticket():
                 new_ticket_id, False, seat_id, ticket_type, refund_deadline, False, payment_method, user_id, concert['name'], concert['time']
             ))
             flash("Ticket purchased successfully!", "success")
-            return redirect(url_for('my_ticket'))
+            response = redirect(url_for('my_ticket'))
+            print("Redirect response: ", response)
+            return response
         except Exception as e:
             flash(f"Error purchasing ticket: {e}", "danger")
 
@@ -233,7 +235,7 @@ def confirm_ticket():
 
 # my ticket
 @app.route('/my_ticket')
-def my_tickets():
+def my_ticket():
     if 'user_id' not in session:
         flash("You must be logged in to view your tickets.", "danger")
         return redirect(url_for('login'))
