@@ -165,7 +165,7 @@ def buy_ticket_seat():
         return redirect(url_for('buy_ticket_payment'))
 
     seats_query = '''
-    SELECT "seatID", price 
+        SELECT "seatID", price 
         FROM public."SEAT_PRICE" sp
         WHERE sp.concert_name = %s AND sp.concert_time = %s
         AND NOT EXISTS (
@@ -174,10 +174,12 @@ def buy_ticket_seat():
             WHERE t."seatID" = sp."seatID" 
             AND t.concert_name = sp.concert_name
             AND t.concert_time = sp.concert_time
+            AND t.refund_status = False  -- 確保票券尚未退款
         )
-    '''
+        '''
 
     seats = execute_query(seats_query, (concert['name'], concert['time']), fetch_all=True)
+
     return render_template('buy_ticket_seat.html', seats=seats, concert=concert)
 
 #buy ticket 付款方式
@@ -284,6 +286,43 @@ def my_ticket():
     tickets = execute_query(query, (user_id,), fetch_all=True)
 
     return render_template('my_ticket.html', tickets=tickets)
+
+@app.route('/refund_ticket/<int:ticket_id>', methods=['GET', 'POST'])
+def refund_ticket(ticket_id):
+    # 確保用戶已登入
+    if 'user_id' not in session:
+        flash("You must be logged in to refund a ticket.", "danger")
+        return redirect(url_for('login'))
+
+    # 查詢票券資訊
+    user_id = session['user_id']
+    ticket_query = '''
+        SELECT * FROM public."TICKET" 
+        WHERE "ticketID" = %s AND "userID" = %s AND refund_status = False
+    '''
+    ticket = execute_query(ticket_query, (ticket_id, user_id), fetch_one=True)
+
+    # 如果票券不存在或無法退款，返回錯誤
+    if not ticket:
+        flash("Invalid ticket or ticket cannot be refunded.", "danger")
+        return redirect(url_for('my_ticket'))
+
+    if request.method == 'POST':
+        # 執行退款
+        refund_query = '''
+            UPDATE public."TICKET"
+            SET refund_status = True
+            WHERE "ticketID" = %s
+        '''
+        try:
+            execute_query(refund_query, (ticket_id,))
+            flash("Ticket refunded successfully!", "success")
+        except Exception as e:
+            flash(f"Error refunding ticket: {e}", "danger")
+        return redirect(url_for('my_ticket'))
+
+    # 渲染退款確認頁面
+    return render_template('refund_ticket.html', ticket=ticket)
 
 
 #############################################################################################################

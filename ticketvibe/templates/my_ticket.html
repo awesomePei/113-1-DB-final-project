@@ -5,52 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Tickets</title>
     <style>
+        /* General Page Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
+            color: #333;
             margin: 0;
             padding: 20px;
         }
+
         h1 {
             color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
         }
+
         .ticket-list {
-            margin-top: 20px;
-            border-collapse: collapse;
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
+
         .ticket-list th, .ticket-list td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        .ticket-list th {
-            background-color: #f4f4f9;
-            color: #333;
             text-align: left;
+            padding: 12px;
+            border: 1px solid #ddd;
         }
+
+        .ticket-list th {
+            background-color: #52b6dd;
+            color: white;
+        }
+
         .ticket-list tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         .ticket-list tr:hover {
-            background-color: #ddd;
+            background-color: #e8f4fa;
         }
-        .back-link {
-            display: block;
-            margin-bottom: 15px;
-            margin-top: 15px;
+
+        .refund-btn {
+            background-color: #0b2355;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
             font-size: 14px;
+        }
+
+        .refund-btn:hover {
+            background-color: #0b2355;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
             text-decoration: none;
             color: #52b6dd;
-            text-align: left;
         }
 
         .back-link:hover {
             color: #2f96bf;
         }
+
+        .no-tickets {
+            font-size: 18px;
+            color: #555;
+            text-align: center;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
     <h1>My Tickets</h1>
+
     {% if tickets %}
         <table class="ticket-list">
             <thead>
@@ -77,13 +107,21 @@
                         <td>{{ ticket.payment }}</td>
                         <td>{{ ticket.order_time }}</td>
                         <td>{{ ticket.collected }}</td>
-                        <td>{{ ticket.refund_status }}</td>
+                        <td>
+                            {% if ticket['refund_status'] %}
+                                <!-- 如果已退款，顯示 'Refunded' -->
+                                <span>Refunded</span>
+                            {% else %}
+                                <!-- 如果未退款，顯示退款按鈕 -->
+                                <a href="{{ url_for('refund_ticket', ticket_id=ticket['ticketID']) }}" class="refund-btn">Refund</a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>You haven't purchased any tickets yet.</p>
+        <p class="no-tickets">You haven't purchased any tickets yet.</p>
     {% endif %}
 
     <a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
