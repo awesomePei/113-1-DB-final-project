@@ -226,8 +226,12 @@ def confirm_ticket():
     elif current_time >= public_time:
         ticket_type = "Public"
     else:
-        flash("Tickets are not on sale at this time.", "warning")
-        return redirect(url_for('buy_ticket_concert'))
+        error_message = "Tickets are not on sale at this time."
+        return render_template('confirm_ticket.html', 
+                               concert=concert, 
+                               seat_id=seat_id, 
+                               payment=payment_method, 
+                               error_message=error_message)
 
 
     if request.method == 'POST':
