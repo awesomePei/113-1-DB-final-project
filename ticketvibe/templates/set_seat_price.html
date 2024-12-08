@@ -82,7 +82,7 @@
         <h1>Set Seat Price</h1>
         <form action="{{ url_for('set_seat_price') }}" method="POST">
             <label for="concert_name">Concert Name:</label>
-            <select id="concert_name" name="concert_name" required>
+            <select id="concert_name" name="concert_name" onchange="updateConcertTime()"  required>
                 {% for concert in concerts %}
                     <option value="{{ concert['name'] }}" data-time="{{ concert['time'] }}">
                         {{ concert['name'] }} ({{ concert['time'] }})
