@@ -275,7 +275,7 @@ def my_ticket():
 
     user_id = session['user_id']
     query = '''
-        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, c.name AS concert_name, c."time" AS concert_time 
+        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, t.collected, t.refund_status, c.name AS concert_name, c."time" AS concert_time 
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name AND t.concert_time = c."time"
         WHERE t."userID" = %s

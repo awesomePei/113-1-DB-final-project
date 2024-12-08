@@ -61,6 +61,8 @@
                     <th>Type</th>
                     <th>Payment</th>
                     <th>Order Time</th>
+                    <th>Collection</th>
+                    <th>Refund</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,6 +75,8 @@
                         <td>{{ ticket.type }}</td>
                         <td>{{ ticket.payment }}</td>
                         <td>{{ ticket.order_time }}</td>
+                        <td>{{ ticket.collected }}</td>
+                        <td>{{ ticket.refund_status }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
