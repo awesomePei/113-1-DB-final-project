@@ -5,80 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Concerts</title>
     <style>
+        /* General Page Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             color: #333;
+            margin: 0;
+            padding: 20px;
         }
+
         h1 {
             color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2f96bf;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
-        table {
-            margin: 20px;
-            border-collapse: collapse;
-            width: 80%;
-        }
+
         th, td {
             border: 1px solid #ddd;
             text-align: left;
-            padding: 8px;
+            padding: 12px;
         }
+
         th {
             background-color: #52b6dd;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #e8f4fa;
         }
-        a {
-            text-decoration: none;
-            color: #52b6dd;
+
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #777;
+            margin-top: 20px;
         }
+
+        .action-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .buy-ticket {
+        font-size: 16px;
+        text-decoration: none;
+        color: #52b6dd;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: 1px solid #52b6dd;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .buy-ticket:hover{
+        background-color: #52b6dd;
+        color: white;
+    }
+
+    .back-link {
+        font-size: 16px;
+        text-decoration: none;
+        color: #52b6dd;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .back-link:hover{
+        color: #2f96bf;;
+    }
     </style>
 </head>
 <body>
-    <h1>Concerts !!</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Time</th>
-                <th>Venue</th>
-                <th>Host</th>
-                <th>Presale Time</th>
-                <th>Public Sale Time</th>
-                <th>Buy</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for concert in concerts %}
-            <tr>
-                <td>{{ concert.name }}</td>
-                <td>{{ concert.time }}</td>
-                <td>{{ concert.venue_address }}</td>
-                <td>{{ concert.host_phone }}</td>
-                <td>{{ concert.presale_time }}</td>
-                <td>{{ concert.public_sale_time }}</td>
-                <td>
-                    <!-- Add a link to the 'buy ticket' page for each concert -->
-                    <a href="{{ url_for('buy_ticket_concert', concert_name=concert.name, concert_time=concert_time) }}" class="buy-ticket-btn">Buy Ticket</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div style="display: inline-flex; gap: 10px;">
-        <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a>
-    </div>
+    <h1>Upcoming Concerts</h1>
+
+    <!-- Search Form -->
+    <form method="POST" action="{{ url_for('user_search_concert') }}">
+        <input type="text" name="search_query" value="{{ search_query }}" placeholder="Search by concert name">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if concerts %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Venue</th>
+                    <th>Host</th>
+                    <th>Presale Time</th>
+                    <th>Public Sale Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for concert in concerts %}
+                <tr>
+                    <td>{{ concert.name }}</td>
+                    <td>{{ concert.time }}</td>
+                    <td>{{ concert.venue_address }}</td>
+                    <td>{{ concert.host_phone }}</td>
+                    <td>{{ concert.presale_time }}</td>
+                    <td>{{ concert.public_sale_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-results">No upcoming concerts found matching your search.</p>
+    {% endif %}
     
+    <div class="action-links">
+        <a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+        <a href="{{ url_for('buy_ticket_concert') }}" class="buy-ticket">Buy Ticket</a>
+    </div>
 </body>
 </html>

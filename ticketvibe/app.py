@@ -58,27 +58,32 @@ def login():
     return render_template('login.html')
 
 # user 查詢演唱會
-@app.route('/user_search_concert')
+@app.route('/user_search_concert', methods=['GET', 'POST'])
 def user_search_concert():
     from datetime import datetime
 
     current_time = datetime.now()
 
-    # Print current time for debugging
-    print(f"Current time: {current_time}")
+    if request.method == 'POST':
+        search_query = request.form.get('search_query', '')
 
-    query = '''
-        SELECT * FROM public."CONCERT"
-        WHERE "time" > %s
-    '''
-    concerts = execute_query(query, (current_time,), fetch_all=True)
+        # 搜尋演唱會名稱並過濾掉過期的演唱會
+        query = '''
+            SELECT * FROM public."CONCERT"
+            WHERE "time" > %s AND name ILIKE %s
+        '''
+        concerts = execute_query(query, (current_time, f'%{search_query}%'), fetch_all=True)
 
-    # Print concerts for debugging
-    print(f"Concerts found: {concerts}")
+    else:
+        # 顯示所有未過期的演唱會
+        query = '''
+            SELECT * FROM public."CONCERT"
+            WHERE "time" > %s
+        '''
+        concerts = execute_query(query, (current_time,), fetch_all=True)
 
-    return render_template('user_search_concert.html', concerts=concerts)
+    return render_template('user_search_concert.html', concerts=concerts, search_query=search_query if request.method == 'POST' else '')
 
-    return render_template('user_search_concert.html', concerts=concerts)
 
 # buy ticket 選演唱會
 @app.route('/buy_ticket_concert', methods=['GET', 'POST'])
@@ -237,7 +242,7 @@ def my_ticket():
 
     return render_template('my_ticket.html', tickets=tickets, current_time=current_time)
 
-
+# user 退款
 @app.route('/refund_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 def refund_ticket(ticket_id):
     # 確保用戶已登入
@@ -505,20 +510,52 @@ def search_user():
         return render_template('search_user.html', users=users)
 
     # 如果是 GET 請求，則列出所有使用者
-    users_query = '''SELECT * FROM public."USERS";'''
+    users_query = '''SELECT * FROM public."USERS"
+                    WHERE isAdmin = false;'''
     users = execute_query(users_query, fetch_all=True)
 
     # 返回所有使用者到模板
     return render_template('search_user.html', users=users)
 
+# see user tickets
+@app.route('/ticket/<string:userid>', methods=['GET'])
+def ticket(userid):
+    # 查询用户的门票
+    query = '''
+        SELECT t."ticketID", t.concert_name, t.order_time, t.concert_time, t.refund_status
+        FROM public."TICKET" t
+        JOIN public."CONCERT" c ON t.concert_name = c.name and t.concert_time = c.time
+        WHERE t."userID" = %s
+    '''
+    tickets = execute_query(query, (userid,), fetch_all=True)
+
+    # 返回模板并传递门票数据
+    return render_template('ticket.html', tickets=tickets, userid=userid)
 
 
 # 查詢演唱會
-@app.route('/search_concert')
+@app.route('/search_concert', methods=['GET', 'POST'])
 def search_concert():
+    if request.method == 'POST':
+        # 獲取使用者輸入的搜尋關鍵字
+        search_query = request.form.get('search_query', '')
+
+        # 根據搜尋條件執行 SQL 查詢，使用 ILIKE 來進行不區分大小寫的模糊匹配
+        concert_query = '''
+            SELECT * FROM public."CONCERT"
+            WHERE name ILIKE %s
+        '''
+        # 執行查詢
+        concerts = execute_query(concert_query, ('%' + search_query + '%',), fetch_all=True)
+
+        # 返回搜尋結果
+        return render_template('search_concert.html', concerts=concerts, search_query=search_query)
+
+    # 如果是 GET 請求，顯示所有演唱會
     query = """SELECT * FROM public."CONCERT";"""
     concerts = execute_query(query, fetch_all=True)
-    return render_template('search_concert.html', concerts=concerts)
+    return render_template('search_concert.html', concerts=concerts, search_query='')
+
 
 
 # 登出頁面

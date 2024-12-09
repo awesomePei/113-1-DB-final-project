@@ -29,7 +29,7 @@
             text-align: center;
             color: #52b6dd;
             font-size: 36px;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
         }
         p {
             font-size: 18px;
@@ -67,15 +67,17 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to TicketVibe!</h1>
         {% if session.user_id %}
-            <p>Logged in as {{ session.user_id }}</p>
             {% if session.isadmin %}
+                <h1>Welcome, Admin</h1>
+                <p>Logged in as {{ session.user_id }}</p>
                 <div class="admin-options">
                     <a href="{{ url_for('admin_dashboard') }}" class="link">Dashboard</a> |
                     <a href="/logout">Logout</a>
                 </div>
             {% else %}
+                <h1>Welcome to TicketVibe!</h1>
+                <p>Logged in as {{ session.user_id }}</p>
                 <div class="user-options">
                     <!-- <a href="/buy_ticket">Buy Ticket</a> | -->
                     <a href="/buy_ticket_concert">Buy Ticket</a> | 
@@ -86,6 +88,7 @@
             {% endif %}
         {% else %}
         <br>
+        <h1>Welcome to TicketVibe!</h1>
             <div class="options">
                 <a href="/user_search_concert">See Concerts</a>｜
                 <a href="/register">Register</a> |

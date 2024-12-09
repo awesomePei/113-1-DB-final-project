@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
+    <title>Search Users</title>
     <style>
         /* General Page Styles */
         body {
@@ -22,7 +22,7 @@
 
         form {
             margin-bottom: 30px;
-            text-align: center;
+            text-align: left;
         }
 
         input[type="text"] {
@@ -92,11 +92,22 @@
         .back-link:hover {
             color: #2f96bf;
         }
+
+        .see-tickets-btn {
+            display: inline-block;
+            font-size: 16px;
+            text-decoration: none;
+            color: #52b6dd;
+        }
+
+        .see-tickets-btn:hover {
+            color: #2f96bf;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Search Users</h1>
+    <h1>Search for Users</h1>
 
     <!-- Search Form -->
     <form method="POST" action="{{ url_for('search_user') }}">
@@ -112,6 +123,7 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Tickets</th>
             </tr>
         </thead>
         <tbody>
@@ -121,6 +133,10 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.phone }}</td>
+                <td>
+                    <!-- 添加 See Tickets 按钮 -->
+                    <a href="{{ url_for('ticket', userid=user.userid) }}" class="see-tickets-btn">See Tickets</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
