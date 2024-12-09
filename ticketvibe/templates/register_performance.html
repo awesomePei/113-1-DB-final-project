@@ -89,14 +89,16 @@
             </select>
 
             <label for="concert_name">Select Concert:</label>
-            <select id="concert_name" name="concert_name" required>
+            <select id="concert_name" name="concert_name" onchange="updateConcertTime()" required>
                 {% for concert in concerts %}
-                    <option value="{{ concert.name }}">{{ concert.name }} - {{ concert.time }}</option>
+                    <option value="{{ concert.name }}" data-time="{{ concert['time'] }}">
+                        {{ concert.name }} ({{ concert.time }})
+                    </option>
                 {% endfor %}
             </select>
 
-            <label for="concert_time">Concert Time:</label>
-            <input type="datetime-local" id="concert_time" name="concert_time" required>
+            <!--<label for="concert_time">Concert Time:</label>-->
+            <input type="hidden" id="concert_time" name="concert_time">
 
             <button type="submit">Register Performance</button>
         </form>
@@ -104,4 +106,17 @@
         <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a>
     </div>
 </body>
+<script>
+    function updateConcertTime() {
+        const concertSelect = document.getElementById('concert_name');
+        const selectedOption = concertSelect.options[concertSelect.selectedIndex];
+        const concertTime = selectedOption.getAttribute('data-time');
+        document.getElementById('concert_time').value = concertTime;
+    }
+
+    // Initialize the hidden input when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateConcertTime();
+    });
+</script>
 </html>
