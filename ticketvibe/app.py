@@ -259,7 +259,7 @@ def refund_ticket(ticket_id):
         return redirect(url_for('my_ticket'))
 
     # 確認當前時間是否在 refund_ddl 之前
-    current_time_query = "SELECT NOW() AS current_time"
+    current_time_query = "SELECT NOW()::date AS current_time"  # Convert to date directly in SQL
     current_time = execute_query(current_time_query, fetch_one=True)['current_time']
     refund_ddl = ticket['refund_ddl']
 
