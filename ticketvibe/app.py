@@ -19,14 +19,14 @@ def register():
         phone = request.form['phonenum']
         email = request.form['email']
         password = request.form['pwd']
-        isAdmin = False  # Default to regular user
+        isadmin = False  # Default to regular user
 
         query = """
-            INSERT INTO public."USERS" (userid, username, phone, email, password, "isAdmin")
+            INSERT INTO public."USERS" ("userID", username, phone, email, password, isadmin)
             VALUES (%s, %s, %s, %s, %s, %s);
         """
         try:
-            execute_query(query, (user_id, name, phone, email, password, isAdmin))
+            execute_query(query, (user_id, name, phone, email, password, isadmin))
             print("yes")
             flash("Registration successful! Please log in.", "success")
             return redirect(url_for('login'))
@@ -43,11 +43,11 @@ def login():
         user_id = request.form['userid']
         password = request.form['pwd']
 
-        query = """SELECT * FROM public."USERS" WHERE userid = %s;"""
+        query = """SELECT * FROM public."USERS" WHERE "userID" = %s;"""
         user = execute_query(query, (user_id,), fetch_one=True)
 
         if user and user['password'] == password:
-            session['user_id'] = user['userid']
+            session['user_id'] = user['userID']
             session['isadmin'] = user['isadmin']
             flash("Login successful!", "success")
             if user['isadmin']:  # If the user is an admin, redirect to admin dashboard
@@ -297,7 +297,7 @@ def refund_ticket(ticket_id):
 # admin 面板
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
-    if 'user_id' not in session or not session.get('isAdmin'):  # Check if the user is logged in and is admin
+    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
         flash("Access denied. Admins only.", "danger")
         return redirect(url_for('index'))
 
@@ -513,8 +513,8 @@ def search_user():
 
     # 如果是 GET 請求，則列出所有使用者
     users_query = '''SELECT * FROM public."USERS"
-                    WHERE "isAdmin" = false
-                    ORDER BY userid ASC ;'''
+                    WHERE "isadmin" = false
+                    ORDER BY "userID" ASC ;'''
     users = execute_query(users_query, fetch_all=True)
 
     # 返回所有使用者到模板
