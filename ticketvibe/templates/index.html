@@ -68,7 +68,7 @@
 <body>
     <div class="container">
         {% if session.user_id %}
-            {% if session.isadmin %}
+            {% if session.isAdmin %}
                 <h1>Welcome, Admin</h1>
                 <p>Logged in as {{ session.user_id }}</p>
                 <div class="admin-options">

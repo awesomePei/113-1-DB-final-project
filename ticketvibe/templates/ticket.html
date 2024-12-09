@@ -62,6 +62,18 @@
         .back-link:hover {
             color: #2f96bf;
         }
+
+        .collect-btn {
+            color: #fff;
+            background-color: #206399;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .collect-btn:hover {
+            background-color: #206399;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +89,7 @@
                 <th>Concert Time</th>
                 <th>Order Time</th>
                 <th>Refund Status</th>
+                <th>Collection</th>
             </tr>
         </thead>
         <tbody>
@@ -88,12 +101,21 @@
                 <td>{{ ticket.order_time }}</td>
                 <td>
                     {% if ticket['refund_status'] %}
-                        <!-- If refunded, display 'Refunded' -->
-                        <span>Refunded</span>
+                        Refunded
                     {% else %}
-                        <span>None</span>
+                        None
                     {% endif %}
                 </td>
+                <td>
+                    {% if ticket['refund_status'] %}
+                        No Collection
+                    {% elif ticket['collected'] %}
+                        Collected
+                    {% else %}
+                        <a href="{{ url_for('collected', ticket_id=ticket['ticketID'], userid=userid) }}" class="collect-btn">Collect</a>
+                    {% endif %}
+                </td>
+
             </tr>
             {% endfor %}
         </tbody>

@@ -22,14 +22,16 @@ def register():
         isAdmin = False  # Default to regular user
 
         query = """
-            INSERT INTO public."USERS" (userid, username, phone, email, password, isAdmin)
+            INSERT INTO public."USERS" (userid, username, phone, email, password, "isAdmin")
             VALUES (%s, %s, %s, %s, %s, %s);
         """
         try:
             execute_query(query, (user_id, name, phone, email, password, isAdmin))
+            print("yes")
             flash("Registration successful! Please log in.", "success")
             return redirect(url_for('login'))
         except:
+            print("no")
             flash("Registration failed. User ID may already exist.", "danger")
 
     return render_template('register.html')
@@ -46,9 +48,9 @@ def login():
 
         if user and user['password'] == password:
             session['user_id'] = user['userid']
-            session['isadmin'] = user['isadmin']
+            session['isAdmin'] = user['isAdmin']
             flash("Login successful!", "success")
-            if user['isadmin']:  # If the user is an admin, redirect to admin dashboard
+            if user['isAdmin']:  # If the user is an admin, redirect to admin dashboard
                 return redirect(url_for('index'))
             else:
                 return redirect(url_for('index'))
@@ -295,7 +297,7 @@ def refund_ticket(ticket_id):
 # admin 面板
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
-    if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
+    if 'user_id' not in session or not session.get('isAdmin'):  # Check if the user is logged in and is admin
         flash("Access denied. Admins only.", "danger")
         return redirect(url_for('index'))
 
@@ -511,7 +513,8 @@ def search_user():
 
     # 如果是 GET 請求，則列出所有使用者
     users_query = '''SELECT * FROM public."USERS"
-                    WHERE isAdmin = false;'''
+                    WHERE "isAdmin" = false
+                    ORDER BY userid ASC ;'''
     users = execute_query(users_query, fetch_all=True)
 
     # 返回所有使用者到模板
@@ -522,13 +525,13 @@ def search_user():
 def ticket(userid):
     # 查询用户的门票
     query = '''
-        SELECT t."ticketID", t.concert_name, t.order_time, t.concert_time, t.refund_status
+        SELECT t."ticketID", t.concert_name, t.order_time, t.concert_time, t.refund_status, t.collected
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name and t.concert_time = c.time
         WHERE t."userID" = %s
     '''
     tickets = execute_query(query, (userid,), fetch_all=True)
-
+    print(tickets)
     # 返回模板并传递门票数据
     return render_template('ticket.html', tickets=tickets, userid=userid)
 
@@ -555,6 +558,44 @@ def search_concert():
     query = """SELECT * FROM public."CONCERT";"""
     concerts = execute_query(query, fetch_all=True)
     return render_template('search_concert.html', concerts=concerts, search_query='')
+
+
+@app.route('/collected/<int:ticket_id><string:userid>', methods=['GET', 'POST'])
+def collected(ticket_id, userid):
+    # 確保用戶已登入
+    if 'user_id' not in session:
+        flash("You must be logged in to collect a ticket.", "danger")
+        return redirect(url_for('login'))
+    
+    print(userid)
+    print(ticket_id)
+    # 查詢票券資料
+    query = '''
+        SELECT t.* FROM public."TICKET" t
+        WHERE t."ticketID" = %s AND t.collected = False AND t.refund_status = False
+    '''
+    ticket = execute_query(query, (ticket_id,), fetch_one=True)
+    print(ticket)
+
+    if not ticket:
+        flash("Invalid ticket or already collected.", "danger")
+        return redirect(url_for('ticket', userid=userid))
+
+    if request.method == 'POST':
+        # 標記票券為已領取
+        update_query = '''
+            UPDATE public."TICKET"
+            SET collected = True
+            WHERE "ticketID" = %s
+        '''
+        try:
+            execute_query(update_query, (ticket_id,))
+            flash("Ticket successfully collected!", "success")
+        except Exception as e:
+            flash(f"Error refunding ticket: {e}", "danger")
+        return redirect(url_for('ticket', userid=userid))
+        
+    return render_template('collected.html', ticket=ticket, userid=userid)
 
 
 
