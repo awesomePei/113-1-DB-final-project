@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from db import execute_query
 
+
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Change this to a secure key
 
@@ -56,83 +57,28 @@ def login():
 
     return render_template('login.html')
 
-# # 購票頁面
-# @app.route('/purchase_ticket', methods=['GET', 'POST'])
-# def purchase_ticket():
-#     if 'user_id' not in session:
-#         flash("Please log in to purchase tickets.", "warning")
-#         return redirect(url_for('login'))
+# user 查詢演唱會
+@app.route('/user_search_concert')
+def user_search_concert():
+    from datetime import datetime
 
-#     if request.method == 'POST':
-#         user_id = session['user_id']
-#         concert_name = request.form['concert_name']
-#         concert_time = request.form['concert_time']
-#         seat_id = request.form['seat_id']
-#         payment = request.form['payment']
+    current_time = datetime.now()
 
-#         query = """
-#             INSERT INTO TICKET (userID, concert_name, concert_time, seatID, payment, order_time)
-#             VALUES (%s, %s, %s, %s, %s, NOW());
-#         """
-#         execute_query(query, (user_id, concert_name, concert_time, seat_id, payment))
-#         flash("Ticket purchased successfully!", "success")
-#         return redirect(url_for('index'))
+    # Print current time for debugging
+    print(f"Current time: {current_time}")
 
-#     return render_template('purchase_ticket.html')
+    query = '''
+        SELECT * FROM public."CONCERT"
+        WHERE "time" > %s
+    '''
+    concerts = execute_query(query, (current_time,), fetch_all=True)
 
-# # NEW 購票頁面
-# @app.route('/buy_ticket', methods=['GET', 'POST'])
-# def buy_ticket():
-#     if 'user_id' not in session:  # Check if user is logged in
-#         flash("You must be logged in to buy a ticket.", "danger")
-#         return redirect(url_for('login'))
+    # Print concerts for debugging
+    print(f"Concerts found: {concerts}")
 
-#     if request.method == 'POST':
-#         seat_id = request.form.get('seatID')
-#         ticket_type = request.form.get('type')
-#         payment_method = request.form.get('payment')
-#         user_id = session['user_id']
-#         concert_name = request.form.get('concert_name')
-#         concert_time = request.form.get('concert_time')  # Will now get the hidden field value
+    return render_template('user_search_concert.html', concerts=concerts)
 
-#         # Generate ticket ID (getting the max ticketID + 1)
-#         ticket_id_query = 'SELECT COALESCE(MAX("ticketID"), 0) + 1 AS new_id FROM public."TICKET"'
-#         new_ticket_id = execute_query(ticket_id_query, fetch_one=True)['new_id']
-        
-#         # Refund deadline query (7 days from now)
-#         refund_deadline_query = "SELECT CURRENT_DATE + INTERVAL '7 days' AS refund_ddl"
-#         refund_deadline = execute_query(refund_deadline_query, fetch_one=True)['refund_ddl']
-
-#         # Prepare the query to insert the ticket into the database
-#         insert_query = """
-#             INSERT INTO public."TICKET" 
-#             ("ticketID", collected, "seatID", type, order_time, refund_ddl, refund_status, payment, "userID", concert_name, concert_time)
-#             VALUES (%s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s)
-#         """
-#         try:
-#             execute_query(insert_query, (
-#                 new_ticket_id, False, seat_id, ticket_type, refund_deadline, False, payment_method, user_id, concert_name, concert_time
-#             ))
-#             flash("Ticket purchased successfully!", "success")
-#             return redirect(url_for('my_tickets'))
-#         except Exception as e:
-#             flash(f"Error purchasing ticket: {e}", "danger")
-
-#     # Fetch available concerts and seats
-#     concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
-#     seats_query = '''
-#                     SELECT "seatID", price 
-#                     FROM public."SEAT_PRICE" sp
-#                     WHERE NOT EXISTS (
-#                         SELECT 1 
-#                         FROM public."TICKET" t 
-#                         WHERE t."seatID" = sp."seatID"
-#                     )
-#                     '''
-#     concerts = execute_query(concerts_query, fetch_all=True)
-#     seats = execute_query(seats_query, fetch_all=True)
-
-#     return render_template('buy_ticket.html', concerts=concerts, seats=seats)
+    return render_template('user_search_concert.html', concerts=concerts)
 
 # buy ticket 選演唱會
 @app.route('/buy_ticket_concert', methods=['GET', 'POST'])
@@ -275,9 +221,13 @@ def my_ticket():
         flash("You must be logged in to view your tickets.", "danger")
         return redirect(url_for('login'))
 
+    # Query to get the current time from the database
+    current_time_query = "SELECT NOW()::date AS current_time"  # Convert to date directly in SQL
+    current_time = execute_query(current_time_query, fetch_one=True)['current_time']
+
     user_id = session['user_id']
     query = '''
-        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, t.collected, t.refund_status, c.name AS concert_name, c."time" AS concert_time 
+        SELECT t."ticketID", t."seatID", t.type, t.payment, t.order_time, t.collected, t.refund_status, t.refund_ddl, c.name AS concert_name, c."time" AS concert_time 
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name AND t.concert_time = c."time"
         WHERE t."userID" = %s
@@ -285,7 +235,8 @@ def my_ticket():
     '''
     tickets = execute_query(query, (user_id,), fetch_all=True)
 
-    return render_template('my_ticket.html', tickets=tickets)
+    return render_template('my_ticket.html', tickets=tickets, current_time=current_time)
+
 
 @app.route('/refund_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 def refund_ticket(ticket_id):
@@ -297,14 +248,23 @@ def refund_ticket(ticket_id):
     # 查詢票券資訊
     user_id = session['user_id']
     ticket_query = '''
-        SELECT * FROM public."TICKET" 
-        WHERE "ticketID" = %s AND "userID" = %s AND refund_status = False
+        SELECT t.*, t.refund_ddl FROM public."TICKET" t
+        WHERE t."ticketID" = %s AND t."userID" = %s AND t.refund_status = False
     '''
     ticket = execute_query(ticket_query, (ticket_id, user_id), fetch_one=True)
 
     # 如果票券不存在或無法退款，返回錯誤
     if not ticket:
         flash("Invalid ticket or ticket cannot be refunded.", "danger")
+        return redirect(url_for('my_ticket'))
+
+    # 確認當前時間是否在 refund_ddl 之前
+    current_time_query = "SELECT NOW() AS current_time"
+    current_time = execute_query(current_time_query, fetch_one=True)['current_time']
+    refund_ddl = ticket['refund_ddl']
+
+    if current_time > refund_ddl:
+        flash("Refund period has expired. You cannot refund this ticket.", "danger")
         return redirect(url_for('my_ticket'))
 
     if request.method == 'POST':
@@ -525,6 +485,32 @@ def set_seat_price():
     concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
     concerts = execute_query(concerts_query, fetch_all=True)
     return render_template('set_seat_price.html', concerts=concerts)
+
+# 查詢使用者
+@app.route('/search_user', methods=['GET', 'POST'])
+def search_user():
+    # 如果是 POST 請求，執行搜尋
+    if request.method == 'POST':
+        search_query = request.form.get('search_query')
+        
+        # 根據搜尋條件查詢用戶（使用LIKE進行模糊匹配）
+        user_query = '''
+            SELECT * FROM public."USERS"
+            WHERE userid LIKE %s OR email LIKE %s
+        '''
+        # 執行查詢並過濾結果
+        users = execute_query(user_query, ('%' + search_query + '%', '%' + search_query + '%'), fetch_all=True)
+
+        # 返回搜尋結果到模板
+        return render_template('search_user.html', users=users)
+
+    # 如果是 GET 請求，則列出所有使用者
+    users_query = '''SELECT * FROM public."USERS";'''
+    users = execute_query(users_query, fetch_all=True)
+
+    # 返回所有使用者到模板
+    return render_template('search_user.html', users=users)
+
 
 
 # 查詢演唱會

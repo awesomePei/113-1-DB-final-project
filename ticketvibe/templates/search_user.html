@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2f96bf;
+        }
+
+        .user-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .user-list th, .user-list td {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .user-list th {
+            background-color: #52b6dd;
+            color: white;
+        }
+
+        .user-list tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .user-list tr:hover {
+            background-color: #e8f4fa;
+        }
+
+        .no-users {
+            font-size: 18px;
+            color: #555;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #52b6dd;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Search Users</h1>
+
+    <!-- Search Form -->
+    <form method="POST" action="{{ url_for('search_user') }}">
+        <input type="text" name="search_query" placeholder="Search by userid or email" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if users %}
+    <table class="user-list">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.userid }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="no-users">No users found matching your search.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">Back to Dashboard</a>
+
+</body>
+</html>

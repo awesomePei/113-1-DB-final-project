@@ -37,6 +37,13 @@
             text-align: left; /* Center-align text inside the h2 */
             box-sizing: border-box;
         }
+        h4 {
+            font-size: 12px;
+            margin: 15px 0;
+            width: 100%; /* Set the width of h2 to 100% of the parent container */
+            text-align: left; /* Center-align text inside the h2 */
+            box-sizing: border-box;
+        }
         a {
             text-decoration: none;
             color: #52b6dd;
@@ -66,14 +73,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, Admin</h1>
+        <h1>Welcome</h1>
+        <h2>About Concerts</h2>
         <h2><a href="{{ url_for('add_concert') }}">Add a New Concert</a></h2>
+        <h2><a href="/search_concert">See Concerts</a></h2>
         <h2><a href="{{ url_for('add_host') }}">Add a New Host</a></h2>
         <h2><a href="{{ url_for('add_venue') }}">Add a New Venue</a></h2>
         <h2><a href="{{ url_for('add_performer') }}">Add a New Performer</a></h2>
         <h2><a href="{{ url_for('register_performance') }}">Register A Performer To Perform In A Concert</a></h2>
         <h2><a href="{{ url_for('set_seat_price') }}">Set Seat Prices</a></h2>
-        <h2><a href="/search_concert">See Concerts</a></h2>
+
+        <h2>About Users</h2>
+        <h2><a href="/search_user">See Users</a></h2>
+
         <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
     </div>
 </body>

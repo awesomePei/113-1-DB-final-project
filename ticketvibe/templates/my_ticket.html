@@ -109,13 +109,19 @@
                         <td>{{ ticket.collected }}</td>
                         <td>
                             {% if ticket['refund_status'] %}
-                                <!-- 如果已退款，顯示 'Refunded' -->
+                                <!-- If refunded, display 'Refunded' -->
                                 <span>Refunded</span>
                             {% else %}
-                                <!-- 如果未退款，顯示退款按鈕 -->
-                                <a href="{{ url_for('refund_ticket', ticket_id=ticket['ticketID']) }}" class="refund-btn">Refund</a>
+                                {% if ticket['refund_ddl'] < current_time %}
+                                    <!-- If refund_ddl is before the current time, display 'Overdue' -->
+                                    <span>Overdue</span>
+                                {% else %}
+                                    <!-- If not refunded and refund_ddl has not passed, show refund button -->
+                                    <a href="{{ url_for('refund_ticket', ticket_id=ticket['ticketID']) }}" class="refund-btn">Refund</a>
+                                {% endif %}
                             {% endif %}
                         </td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>
