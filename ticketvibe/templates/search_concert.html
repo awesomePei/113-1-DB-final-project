@@ -8,72 +8,126 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             color: #333;
+            margin: 0;
+            padding: 20px;
         }
+
         h1 {
             color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #52b6dd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2f96bf;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
-        table {
-            margin: 20px;
-            border-collapse: collapse;
-            width: 80%;
-        }
+
         th, td {
             border: 1px solid #ddd;
             text-align: left;
-            padding: 8px;
+            padding: 12px;
         }
+
         th {
             background-color: #52b6dd;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #e8f4fa;
         }
-        a {
+
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #777;
+            margin-top: 20px;
+        }
+        .back-link {
+            display: block;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            font-size: 14px;
             text-decoration: none;
             color: #52b6dd;
+            text-align: left;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
         }
     </style>
 </head>
 <body>
-    <h1>All Concerts</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Time</th>
-                <th>Venue</th>
-                <th>Host</th>
-                <th>Presale Time</th>
-                <th>Public Sale Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for concert in concerts %}
-            <tr>
-                <td>{{ concert.name }}</td>
-                <td>{{ concert.time }}</td>
-                <td>{{ concert.venue_address }}</td>
-                <td>{{ concert.host_phone }}</td>
-                <td>{{ concert.presale_time }}</td>
-                <td>{{ concert.public_sale_time }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div style="display: inline-flex; gap: 10px;">
-        <a href="{{ url_for('admin_dashboard') }}" class="link">Back to Dashboard</a>
-    </div>
-    
+    <h1>Search Concerts</h1>
+    <form method="POST" action="{{ url_for('search_concert') }}">
+        <input type="text" name="search_query" value="{{ search_query }}" placeholder="Search by concert name">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if concerts %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Venue</th>
+                    <th>Host</th>
+                    <th>Presale Time</th>
+                    <th>Public Sale Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for concert in concerts %}
+                <tr>
+                    <td>{{ concert.name }}</td>
+                    <td>{{ concert.time }}</td>
+                    <td>{{ concert.venue_address }}</td>
+                    <td>{{ concert.host_phone }}</td>
+                    <td>{{ concert.presale_time }}</td>
+                    <td>{{ concert.public_sale_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-results">No concerts found matching your search.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">Back to Dashboard</a>
 </body>
 </html>

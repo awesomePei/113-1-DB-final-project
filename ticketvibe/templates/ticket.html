@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Tickets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #52b6dd;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #52b6dd;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e8f4fa;
+        }
+
+        .no-tickets {
+            font-size: 18px;
+            color: #555;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #52b6dd;
+        }
+
+        .back-link:hover {
+            color: #2f96bf;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tickets for User {{ userid }}</h1>
+
+    {% if tickets %}
+    <table>
+        <thead>
+            <tr>
+                <th>Ticket ID</th>
+                <th>Concert Name</th>
+                <th>Concert Time</th>
+                <th>Order Time</th>
+                <th>Refund Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.ticketID }}</td>
+                <td>{{ ticket.concert_name }}</td>
+                <td>{{ ticket.concert_time }}</td>
+                <td>{{ ticket.order_time }}</td>
+                <td>
+                    {% if ticket['refund_status'] %}
+                        <!-- If refunded, display 'Refunded' -->
+                        <span>Refunded</span>
+                    {% else %}
+                        <span>None</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="no-tickets">This user has no tickets.</p>
+    {% endif %}
+
+    <a href="{{ url_for('search_user') }}" class="back-link">Back to User Search</a>
+
+</body>
+</html>
