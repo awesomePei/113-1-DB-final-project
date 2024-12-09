@@ -48,9 +48,9 @@ def login():
 
         if user and user['password'] == password:
             session['user_id'] = user['userid']
-            session['isAdmin'] = user['isAdmin']
+            session['isadmin'] = user['isadmin']
             flash("Login successful!", "success")
-            if user['isAdmin']:  # If the user is an admin, redirect to admin dashboard
+            if user['isadmin']:  # If the user is an admin, redirect to admin dashboard
                 return redirect(url_for('index'))
             else:
                 return redirect(url_for('index'))
