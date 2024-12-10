@@ -527,16 +527,14 @@ def search_user():
 @app.route('/ticket/<string:userid>', methods=['GET'])
 def ticket(userid):
     # 查询用户的门票
-    print("no")
     query = '''
         SELECT t."ticketID", t.concert_name, t.order_time, t.concert_time, t.refund_status, t.collected
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name and t.concert_time = c.time
         WHERE t."userID" = %s
+        ORDER BY "ticketID" ASC
     '''
-    print("yes")
     tickets = execute_query(query, (userid,), fetch_all=True)
-    print(tickets)
     # 返回模板并传递门票数据
     return render_template('ticket.html', tickets=tickets, userid=userid)
 
