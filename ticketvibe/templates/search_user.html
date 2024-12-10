@@ -83,7 +83,7 @@
 
         .back-link {
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 5px;
             font-size: 16px;
             text-decoration: none;
             color: #52b6dd;
@@ -115,6 +115,8 @@
         <button type="submit">Search</button>
     </form>
 
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">Back to Dashboard</a>
+
     {% if users %}
     <table class="user-list">
         <thead>
@@ -135,7 +137,7 @@
                 <td>{{ user.phone }}</td>
                 <td>
                     <!-- 添加 See Tickets 按钮 -->
-                    <a href="{{ url_for('ticket', userid=user.userid) }}" class="see-tickets-btn">See Tickets</a>
+                    <a href="{{ url_for('ticket', userid=user.userID) }}" class="see-tickets-btn">See Tickets</a>
                 </td>
             </tr>
             {% endfor %}
@@ -145,7 +147,6 @@
         <p class="no-users">No users found matching your search.</p>
     {% endif %}
 
-    <a href="{{ url_for('admin_dashboard') }}" class="back-link">Back to Dashboard</a>
 
 </body>
 </html>

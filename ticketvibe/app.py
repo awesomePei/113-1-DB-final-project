@@ -27,11 +27,9 @@ def register():
         """
         try:
             execute_query(query, (user_id, name, phone, email, password, isadmin))
-            print("yes")
             flash("Registration successful! Please log in.", "success")
             return redirect(url_for('login'))
         except:
-            print("no")
             flash("Registration failed. User ID may already exist.", "danger")
 
     return render_template('register.html')
@@ -529,12 +527,14 @@ def search_user():
 @app.route('/ticket/<string:userid>', methods=['GET'])
 def ticket(userid):
     # 查询用户的门票
+    print("no")
     query = '''
         SELECT t."ticketID", t.concert_name, t.order_time, t.concert_time, t.refund_status, t.collected
         FROM public."TICKET" t
         JOIN public."CONCERT" c ON t.concert_name = c.name and t.concert_time = c.time
         WHERE t."userID" = %s
     '''
+    print("yes")
     tickets = execute_query(query, (userid,), fetch_all=True)
     print(tickets)
     # 返回模板并传递门票数据
