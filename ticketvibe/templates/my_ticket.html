@@ -108,7 +108,10 @@
                         <td>{{ ticket.order_time }}</td>
                         <td>{{ ticket.collected }}</td>
                         <td>
-                            {% if ticket['refund_status'] %}
+                            {% if ticket['collected'] %}
+                                <!-- If refunded, display 'Refunded' -->
+                                <span>Not Allowed</span>
+                            {% elif ticket['refund_status'] %}
                                 <!-- If refunded, display 'Refunded' -->
                                 <span>Refunded</span>
                             {% else %}

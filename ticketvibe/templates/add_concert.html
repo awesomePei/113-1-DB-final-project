@@ -116,7 +116,7 @@
             <select id="host_phone" name="host_phone" required>
                 <option value="" disabled selected>Choose Host Phone</option>
                 {% for phone in host_phones %}
-                <option value="{{ phone }}">{{ phone }}</option>
+                <option value="{{ phone['phone'] }}">{{ phone['phone'] }}</option>
                 {% endfor %}
             </select><br>
 

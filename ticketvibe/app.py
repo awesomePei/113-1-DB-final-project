@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from db import execute_query
+from db import execute_query, execute_transaction
 
 
 app = Flask(__name__)
@@ -26,7 +26,7 @@ def register():
             VALUES (%s, %s, %s, %s, %s, %s);
         """
         try:
-            execute_query(query, (user_id, name, phone, email, password, isadmin))
+            execute_transaction(query, (user_id, name, phone, email, password, isadmin))
             flash("Registration successful! Please log in.", "success")
             return redirect(url_for('login'))
         except:
@@ -91,14 +91,17 @@ def buy_ticket_concert():
     if 'user_id' not in session:
         flash("You must be logged in to buy a ticket.", "danger")
         return redirect(url_for('login'))
-
+    
     if request.method == 'POST':
         concert_name = request.form.get('concert_name')
         concert_time = request.form.get('concert_time')
         session['selected_concert'] = {'name': concert_name, 'time': concert_time}
         return redirect(url_for('buy_ticket_seat'))
 
-    concerts_query = 'SELECT name, "time" FROM public."CONCERT"'
+    concerts_query = '''
+                        SELECT name, "time" FROM public."CONCERT"
+                        WHERE presale_time <= NOW()
+                    '''
     concerts = execute_query(concerts_query, fetch_all=True)
     return render_template('buy_ticket_concert.html', concerts=concerts)
 
@@ -207,7 +210,7 @@ def confirm_ticket():
             VALUES (%s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s)
         """
         try:
-            execute_query(insert_query, (
+            execute_transaction(insert_query, (
                 new_ticket_id, False, seat_id, ticket_type, refund_deadline, False, payment_method, user_id, concert['name'], concert['time']
             ))
             flash("Ticket purchased successfully!", "success")
@@ -254,7 +257,7 @@ def refund_ticket(ticket_id):
     user_id = session['user_id']
     ticket_query = '''
         SELECT t.*, t.refund_ddl FROM public."TICKET" t
-        WHERE t."ticketID" = %s AND t."userID" = %s AND t.refund_status = False
+        WHERE t."ticketID" = %s AND t."userID" = %s AND t.refund_status = False AND t.collected = False
     '''
     ticket = execute_query(ticket_query, (ticket_id, user_id), fetch_one=True)
 
@@ -280,7 +283,7 @@ def refund_ticket(ticket_id):
             WHERE "ticketID" = %s
         '''
         try:
-            execute_query(refund_query, (ticket_id,))
+            execute_transaction(refund_query, (ticket_id,))
             flash("Ticket refunded successfully!", "success")
         except Exception as e:
             flash(f"Error refunding ticket: {e}", "danger")
@@ -315,7 +318,7 @@ def admin_dashboard():
             INSERT INTO public."CONCERT" (name, time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        execute_query(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
+        execute_transaction(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
         flash("Concert added successfully!", "success")
         return redirect(url_for('admin_dashboard'))
 
@@ -345,11 +348,13 @@ def add_concert():
         presale_time = request.form['presale_time']
         public_sale_time = request.form['public_sale_time']
 
+        print(host_phone)
+
         query = """
             INSERT INTO public."CONCERT" (name, time, "PR_capacity", presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        execute_query(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
+        execute_transaction(query, (concert_name, concert_time, PR_capacity, presale_capacity, public_capacity, venue_address, host_phone, presale_time, public_sale_time))
         flash("Concert added successfully!", "success")
         return redirect(url_for('admin_dashboard'))
 
@@ -373,7 +378,7 @@ def add_host():
             VALUES (%s, %s, %s, %s);
         """
         try:
-            execute_query(query, (name, phone, email, person_in_charge))
+            execute_transaction(query, (name, phone, email, person_in_charge))
             flash("Host added successfully!", "success")
             return redirect(url_for('admin_dashboard'))
         except:
@@ -399,7 +404,7 @@ def add_venue():
             VALUES (%s, %s, %s, %s);
         """
         try:
-            execute_query(query, (address, name, capacity, phone))
+            execute_transaction(query, (address, name, capacity, phone))
             flash("Venue added successfully!", "success")
             return redirect(url_for('admin_dashboard'))
         except:
@@ -425,7 +430,7 @@ def add_performer():
             VALUES (%s, %s, %s, %s)
         """
         try:
-            execute_query(query, (performerID, name, company_name, company_phone))
+            execute_transaction(query, (performerID, name, company_name, company_phone))
             flash("Performer added successfully!", "success")
             return redirect(url_for('admin_dashboard'))
         except:
@@ -449,7 +454,7 @@ def register_performance():
             VALUES (%s, %s, %s)
         """
         try:
-            execute_query(query, (performerID, concert_name, concert_time))
+            execute_transaction(query, (performerID, concert_name, concert_time))
             flash("Performance registered successfully!", "success")
             return redirect(url_for('admin_dashboard'))
         except Exception as e:
@@ -485,7 +490,7 @@ def set_seat_price():
             VALUES (%s, %s, %s, %s)
         """
         try:
-            execute_query(query, (concert_name, concert_time, seat_id, price))
+            execute_transaction(query, (concert_name, concert_time, seat_id, price))
             flash("Seat price set successfully!", "success")
             return redirect(url_for('admin_dashboard'))
         except Exception as e:
@@ -592,7 +597,7 @@ def collected(ticket_id, userid):
             WHERE "ticketID" = %s
         '''
         try:
-            execute_query(update_query, (ticket_id,))
+            execute_transaction(update_query, (ticket_id,))
             flash("Ticket successfully collected!", "success")
         except Exception as e:
             flash(f"Error refunding ticket: {e}", "danger")
