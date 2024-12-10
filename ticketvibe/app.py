@@ -329,6 +329,11 @@ def add_concert():
     if 'user_id' not in session or not session.get('isadmin'):  # Check if the user is logged in and is admin
         flash("Access denied. Admins only.", "danger")
         return redirect(url_for('index'))
+    
+    host_query = 'SELECT DISTINCT phone FROM public."HOST";'  # 假設資料表名稱為 HOSTS
+    venue_query = 'SELECT DISTINCT address FROM public."VENUE";'  # 假設資料表名稱為 VENUES
+    host_phones = execute_query(host_query, fetch_all=True)
+    venues = execute_query(venue_query, fetch_all=True)
 
     if request.method == 'POST':
         # Admin submits the form to add a new concert
@@ -350,7 +355,7 @@ def add_concert():
         flash("Concert added successfully!", "success")
         return redirect(url_for('admin_dashboard'))
 
-    return render_template('add_concert.html')  # This will render the form for adding a new concert
+    return render_template('add_concert.html', host_phones=host_phones, venues=venues)  # This will render the form for adding a new concert
 
 # admin 新增 host
 @app.route('/add_host', methods=['GET', 'POST'])
